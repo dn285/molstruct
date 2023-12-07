@@ -5,6 +5,7 @@ function App() {
     const [selectedTool, setSelectedTool] = useState('dot');
     const [dots, setDots] = useState([]);
     const [lines, setLines] = useState([]);
+    const [selectedDots, setSelectedDots] = useState([]);
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -34,13 +35,21 @@ function App() {
         const rect = canvasRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
+        const clickedDot = dots.find(dot => Math.hypot(dot.x - x, dot.y - y) < 5);
 
         if (selectedTool === 'dot') {
             setDots([...dots, { x, y }]);
         }
-        else if (selectedTool == 'line' && dots.length >= 2) {
-            const newLine = { start: dots[dots.length - 2], end: dots[dots.length - 1] };
-            setLines([...lines, newLine]);
+        else if (selectedTool == 'line') {
+            if (clickedDot) {
+                if (selectedDots.length < 1) {
+                    setSelectedDots([clickedDot]);
+                }
+                else {
+                    setLines([...lines, { start: selectedDots[0], end: clickedDot }])
+                    setSelectedDots([]);
+                }
+            }
         }
     };
 
