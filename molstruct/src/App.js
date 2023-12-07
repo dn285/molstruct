@@ -7,6 +7,7 @@ function App() {
     const [bonds, setBonds] = useState([]);
     const [selectedAtoms, setSelectedAtoms] = useState([]);
     const canvasRef = useRef(null);
+    const atomRadius = 8;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -17,9 +18,27 @@ function App() {
 
         // Draw atoms
         atoms.forEach(atom => {
-            context.font = "20px Arial";
-            context.fillText(atom.type, atom.x, atom.y);
-        })
+            const x = atom.x
+            const y = atom.y
+
+            context.font = "16px Arial";
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.fillText(atom.type, x, y);
+
+            /*
+            // Debug circle
+            context.beginPath();
+            context.arc(x, y, atomRadius, 0, 2 * Math.PI);
+            context.stroke();
+
+            // Debug dot
+            context.beginPath();
+            context.arc(x, y, 2, 0, 2 * Math.PI);
+            context.fillStyle = 'red';
+            context.fill();
+            */
+        });
 
         // Draw bonds
         bonds.forEach(bond => {
@@ -48,12 +67,35 @@ function App() {
                     setSelectedAtoms([clickedAtom]);
                 }
                 else {
-                    setBonds([...bonds, { start: selectedAtoms[0], end: clickedAtom }])
+                    const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius);
+                    setBonds([...bonds, newBond])
                     setSelectedAtoms([]);
                 }
             }
         }
     };
+
+    const createBond = (startAtom, endAtom, atomRadius) => {
+        const dx = endAtom.x - startAtom.x;
+        const dy = endAtom.y - startAtom.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const vx = dx / dist;
+        const vy = dy / dist;
+        const offsetX = vx * atomRadius;
+        const offsetY = vy * atomRadius;
+
+        return {
+            start: {
+                x: startAtom.x + offsetX,
+                y: startAtom.y + offsetY
+            },
+            end: {
+                x: endAtom.x - offsetX,
+                y: endAtom.y - offsetY
+            }
+        };
+    }
 
     return (
         <div className="App">
