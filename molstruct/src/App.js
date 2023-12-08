@@ -30,19 +30,6 @@ function App() {
             context.textAlign = "center";
             context.textBaseline = "middle";
             context.fillText(atom.type, x, y);
-
-            /*
-            // Debug circle
-            context.beginPath();
-            context.arc(x, y, atomRadius, 0, 2 * Math.PI);
-            context.stroke();
-
-            // Debug dot
-            context.beginPath();
-            context.arc(x, y, 2, 0, 2 * Math.PI);
-            context.fillStyle = 'red';
-            context.fill();
-            */
         });
 
         // Draw bonds
@@ -54,6 +41,8 @@ function App() {
         });
     }, [atoms, bonds]);
 
+    // Handlers
+
     const handleCanvasClick = (event) => {
         const rect = canvasRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -63,7 +52,7 @@ function App() {
             Math.abs(atom.x - x) < 10 && Math.abs(atom.y - y) < 10);
 
         if (['C', 'N', 'O', 'H'].includes(selectedTool)) {
-            setAtoms([...atoms, { type: selectedTool, x, y }]);
+            addAtom(selectedTool, x, y);
             setSelectedAtoms([]);
         }
         else if (selectedTool == 'bond') {
@@ -78,6 +67,11 @@ function App() {
                 }
             }
         }
+    };
+
+    const addAtom = (atomType, x, y) => {
+        const newAtom = { type: atomType, x: x, y: y };
+        setAtoms([...atoms, newAtom]);
     };
 
     const createBond = (startAtom, endAtom, atomRadius) => {
@@ -100,7 +94,24 @@ function App() {
                 y: endAtom.y - offsetY
             }
         };
-    }
+    };
+
+    // Computing formulae
+
+    const calculateMolecularFormula = (atoms) => {
+        const atomCounts = atoms.reduce((acc, atom) => {
+            acc[atom.type] = (acc[atom.type] || 0) + 1;
+            return acc;
+        }, {});
+
+        let formula = '';
+        for (const [atom, count] of Object.entries(atomCounts)) {
+            formula += `${atom}${count > 1 ? count : ''}`;
+        }
+        return formula;
+    };
+
+    // The actual page
 
     return (
         <div className="App">
@@ -112,13 +123,12 @@ function App() {
                         <h2>Outputs</h2>
                         <div className="name-group">
                             <label>Molecular Formula</label>
-                            <input type="text" readOnly value="AxByCz" />
+                            <input type="text" readOnly value={calculateMolecularFormula(atoms)} />
                         </div>
                         <div className="name-group">
                             <label>IUPAC Name</label>
-                            <input type="text" readOnly value="AxByCz" />
+                            <input type="text" readOnly value="" />
                         </div>
-
                     </div>
                 </div>
                 <div className="canvas-container">

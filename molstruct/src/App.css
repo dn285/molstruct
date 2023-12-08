@@ -45,7 +45,7 @@
 .sidebar {
     display: flex;
     flex-direction: column;
-    width: 25%;
+    width: 30%;
     padding: 10px;
     text-align: left;
 }
@@ -80,7 +80,7 @@
 }
 
 .drawing-area {
-    width: 70%;
+    width: 80%;
     height: 90%;
     margin: 10px;
     border: 2px solid black;
