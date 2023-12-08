@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
 function App() {
+    const elements = ['H', 'B', 'C', 'N', 'O', 'P', 'S', 'F', 'Cl', 'Br', 'I'];
+
     const [selectedTool, setSelectedTool] = useState('C');
     const [atoms, setAtoms] = useState([]);
     const [bonds, setBonds] = useState([]);
@@ -51,7 +53,7 @@ function App() {
         const clickedAtom = atoms.find(atom =>
             Math.abs(atom.x - x) < 10 && Math.abs(atom.y - y) < 10);
 
-        if (['C', 'N', 'O', 'H'].includes(selectedTool)) {
+        if (elements.includes(selectedTool)) {
             addAtom(selectedTool, x, y);
             setSelectedAtoms([]);
         }
@@ -133,10 +135,15 @@ function App() {
                 </div>
                 <div className="canvas-container">
                     <div className="toolbar">
-                        <button className={selectedTool === 'C' ? 'selected' : ''} onClick={() => setSelectedTool('C')}>C</button>
-                        <button className={selectedTool === 'N' ? 'selected' : ''} onClick={() => setSelectedTool('N')}>N</button>
-                        <button className={selectedTool === 'O' ? 'selected' : ''} onClick={() => setSelectedTool('O')}>O</button>
-                        <button className={selectedTool === 'H' ? 'selected' : ''} onClick={() => setSelectedTool('H')}>H</button>
+                        {elements.map(element => (
+                            <button
+                                key={element}
+                                className={selectedTool === element ? "selected" : ''}
+                                onClick={() => setSelectedTool(element)}
+                            >
+                                {element}
+                            </button>
+                        ))}
                         <button className={selectedTool === 'bond' ? 'selected' : ''} onClick={() => setSelectedTool('bond')}>Bond</button>
                         <button onClick={clearCanvas}>Clear</button>
                     </div>
