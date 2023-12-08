@@ -56,9 +56,13 @@ function App() {
     // Handlers
 
     const handleCanvasClick = (event) => {
-        const rect = canvasRef.current.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const x = (event.clientX - rect.left) * scaleX;
+        const y = (event.clientY - rect.top) * scaleY;
 
         const clickedAtom = atoms.find(atom =>
             Math.abs(atom.x - x) < 10 && Math.abs(atom.y - y) < 10);
