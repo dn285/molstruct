@@ -107,9 +107,22 @@ function App() {
         }, {});
 
         let formula = '';
-        for (const [atom, count] of Object.entries(atomCounts)) {
-            formula += `${atom}${count > 1 ? count : ''}`;
+
+        if (atomCounts.C) {
+            formula += `C${atomCounts.C > 1 ? atomCounts.C : ''}`;
+            delete atomCounts.C;
         }
+
+        if (atomCounts.H) {
+            formula += `H${atomCounts.H > 1 ? atomCounts.H : ''}`;
+            delete atomCounts.H;
+        }
+
+        const sortedAtoms = Object.keys(atomCounts).sort();
+        sortedAtoms.forEach(atom => {
+            formula += `${atom}${atomCounts[atom] > 1 ? atomCounts[atom] : ''}`;
+        });
+
         return formula;
     };
 
