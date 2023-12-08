@@ -9,6 +9,11 @@ function App() {
     const canvasRef = useRef(null);
     const atomRadius = 8;
 
+    const clearCanvas = () => {
+        setAtoms([]);
+        setBonds([]);
+    };
+
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
@@ -99,14 +104,35 @@ function App() {
 
     return (
         <div className="App">
-            <div className="toolbar">
-                <button onClick={() => setSelectedTool('C')}>C</button>
-                <button onClick={() => setSelectedTool('N')}>N</button>
-                <button onClick={() => setSelectedTool('O')}>O</button>
-                <button onClick={() => setSelectedTool('H')}>H</button>
-                <button onClick={() => setSelectedTool('bond')}>Bond</button>
+            <div className="top-container">
+                <div className="sidebar">
+                    <h1>Welcome to molstruct!</h1>
+                    <p>Draw your molecule onto the canvas on the right and see the corresponding IUPAC name below.</p>
+                    <div className="output-names">
+                        <h2>Outputs</h2>
+                        <div className="name-group">
+                            <label>Molecular Formula</label>
+                            <input type="text" readOnly value="AxByCz" />
+                        </div>
+                        <div className="name-group">
+                            <label>IUPAC Name</label>
+                            <input type="text" readOnly value="AxByCz" />
+                        </div>
+
+                    </div>
+                </div>
+                <div className="canvas-container">
+                    <div className="toolbar">
+                        <button className={selectedTool === 'C' ? 'selected' : ''} onClick={() => setSelectedTool('C')}>C</button>
+                        <button className={selectedTool === 'N' ? 'selected' : ''} onClick={() => setSelectedTool('N')}>N</button>
+                        <button className={selectedTool === 'O' ? 'selected' : ''} onClick={() => setSelectedTool('O')}>O</button>
+                        <button className={selectedTool === 'H' ? 'selected' : ''} onClick={() => setSelectedTool('H')}>H</button>
+                        <button className={selectedTool === 'bond' ? 'selected' : ''} onClick={() => setSelectedTool('bond')}>Bond</button>
+                        <button onClick={clearCanvas}>Clear</button>
+                    </div>
+                    <canvas ref={canvasRef} width="800" height="600" onClick={handleCanvasClick} className="drawing-area" />
+                </div>
             </div>
-            <canvas ref={canvasRef} width="800" height="600" onClick={handleCanvasClick} className="drawing-area" />
         </div>
     );
 }
