@@ -133,7 +133,7 @@ function App() {
             <div className="top-container">
                 <div className="sidebar">
                     <h1>Welcome to molstruct!</h1>
-                    <p>Draw your molecule onto the canvas on the right and see the corresponding IUPAC name below.</p>
+                    <p>Draw your molecule onto the canvas on the right and see the corresponding molecular formula below.</p>
                     <div className="output-names">
                         <h2>Outputs</h2>
                         <div className="name-group">
@@ -141,9 +141,29 @@ function App() {
                             <input type="text" readOnly value={calculateMolecularFormula(atoms)} />
                         </div>
                         <div className="name-group">
-                            <label>IUPAC Name</label>
-                            <input type="text" readOnly value="" />
+                            <label>SMILES</label>
+                            <input type="text" readOnly value="Coming soon!" />
                         </div>
+                        <div className="name-group">
+                            <label>SMARTS</label>
+                            <input type="text" readOnly value="Coming soon!" />
+                        </div>
+                        <div className="name-group">
+                            <label>StdInChI</label>
+                            <input type="text" readOnly value="Coming soon!" />
+                        </div>
+                        <div className="name-group">
+                            <label>StdInChIKey</label>
+                            <input type="text" readOnly value="Coming soon!" />
+                        </div>
+                        <div className="name-group">
+                            <label>IUPAC Name</label>
+                            <input type="text" readOnly value="Coming soon!" />
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Export</h2>
+                        <p>Coming soon!</p>
                     </div>
                 </div>
                 <div className="canvas-container">
