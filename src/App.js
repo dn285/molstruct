@@ -11,6 +11,16 @@ function App() {
     const canvasRef = useRef(null);
     const atomRadius = 8;
 
+    //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
+    //const [atomData, setAtomData] = useState([]);
+    const [structuralData, setStructuralData] = useState({
+        smiles: '',
+        smarts: '',
+        stdinchi: '',
+        stdinchikey: '',
+        iupac: ''
+    });
+
     const clearCanvas = () => {
         setAtoms([]);
         setBonds([]);
@@ -57,7 +67,7 @@ function App() {
             addAtom(selectedTool, x, y);
             setSelectedAtoms([]);
         }
-        else if (selectedTool == 'bond') {
+        else if (selectedTool === 'bond') {
             if (clickedAtom) {
                 if (selectedAtoms.length < 1) {
                     setSelectedAtoms([clickedAtom]);
@@ -69,6 +79,8 @@ function App() {
                 }
             }
         }
+
+        updateStructuralData();
     };
 
     const addAtom = (atomType, x, y) => {
@@ -97,6 +109,38 @@ function App() {
             }
         };
     };
+
+    const updateStructuralData = async () => {
+        try {
+            const adjacencyMatrix = "TODO: adjacencyMatrix";
+            const atomData = "TODO: atomData";
+            const data = await fetchStructuralData(adjacencyMatrix, atomData);
+            if (data) {
+                setStructuralData(data);
+            }
+        }
+        catch (error) {
+            console.error("Error during conversion:", error);
+        }
+    };
+
+    const fetchStructuralData = async (adjacencyMatrix, atomData) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ adjacencyMatrix, atomData })
+            });
+            const structuralData = await response.json();
+            return structuralData;
+        }
+        catch (error) {
+            console.error("Error during fetching:", error);
+        }
+    };
+
 
     // Computing formulae
 
@@ -142,7 +186,7 @@ function App() {
                         </div>
                         <div className="name-group">
                             <label>SMILES</label>
-                            <input type="text" readOnly value="Coming soon!" />
+                            <input type="text" readOnly value={structuralData.smiles} />
                         </div>
                         <div className="name-group">
                             <label>SMARTS</label>
