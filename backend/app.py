@@ -30,8 +30,11 @@ def get_iupac(atoms, bonds):
 def compute_structural_data():
     try:
         data = request.json
-        atoms = [atom['type'] for atom in data['atoms']]
-        bonds = [(bond['start'], bond['end']) for bond in data['bonds']]
+
+        print(data['atoms'])
+
+        atoms = [(atom['id'], atom['type']) for atom in data['atoms']]
+        bonds = [(bond['start']['id'], bond['end']['id']) for bond in data['bonds']]
 
         # TODO: Code to compute SMILES and others
         smiles = get_smiles(atoms, bonds)

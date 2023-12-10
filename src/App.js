@@ -51,6 +51,8 @@ function App() {
             context.lineTo(bond.end.x, bond.end.y);
             context.stroke();
         });
+
+        updateStructuralData();
     }, [atoms, bonds]);
 
     // Handlers
@@ -84,11 +86,16 @@ function App() {
             }
         }
 
-        updateStructuralData();
+        //updateStructuralData();
     };
 
     const addAtom = (atomType, x, y) => {
-        const newAtom = { type: atomType, x: x, y: y };
+        const newAtom = {
+            id: atoms.length,
+            type: atomType,
+            x: x,
+            y: y
+        };
         setAtoms([...atoms, newAtom]);
     };
 
@@ -104,10 +111,12 @@ function App() {
 
         return {
             start: {
+                id: startAtom.id,
                 x: startAtom.x + offsetX,
                 y: startAtom.y + offsetY
             },
             end: {
+                id: endAtom.id,
                 x: endAtom.x - offsetX,
                 y: endAtom.y - offsetY
             }
