@@ -14,11 +14,11 @@ function App() {
     //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
     //const [atomData, setAtomData] = useState([]);
     const [structuralData, setStructuralData] = useState({
-        smiles: '',
-        smarts: '',
-        stdinchi: '',
-        stdinchikey: '',
-        iupac: ''
+        smiles: 'Coming soon!',
+        smarts: 'Coming soon!',
+        stdinchi: 'Coming soon!',
+        stdinchikey: 'Coming soon!',
+        iupac: 'Coming soon!'
     });
 
     const clearCanvas = () => {
@@ -192,19 +192,19 @@ function App() {
                         </div>
                         <div className="name-group">
                             <label>SMARTS</label>
-                            <input type="text" readOnly value="Coming soon!" />
+                            <input type="text" readOnly value={structuralData.smarts} />
                         </div>
                         <div className="name-group">
                             <label>StdInChI</label>
-                            <input type="text" readOnly value="Coming soon!" />
+                            <input type="text" readOnly value={structuralData.stdinchi} />
                         </div>
                         <div className="name-group">
                             <label>StdInChIKey</label>
-                            <input type="text" readOnly value="Coming soon!" />
+                            <input type="text" readOnly value={structuralData.stdinchikey} />
                         </div>
                         <div className="name-group">
                             <label>IUPAC Name</label>
-                            <input type="text" readOnly value="Coming soon!" />
+                            <input type="text" readOnly value={structuralData.iupac} />
                         </div>
                     </div>
                     <div>
