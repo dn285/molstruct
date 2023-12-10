@@ -116,9 +116,7 @@ function App() {
 
     const updateStructuralData = async () => {
         try {
-            const adjacencyMatrix = "TODO: adjacencyMatrix";
-            const atomData = "TODO: atomData";
-            const data = await fetchStructuralData(adjacencyMatrix, atomData);
+            const data = await fetchStructuralData();
             if (data) {
                 setStructuralData(data);
             }
@@ -128,14 +126,14 @@ function App() {
         }
     };
 
-    const fetchStructuralData = async (adjacencyMatrix, atomData) => {
+    const fetchStructuralData = async () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/convert', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ adjacencyMatrix, atomData })
+                body: JSON.stringify({ atoms, bonds })
             });
             const structuralData = await response.json();
             return structuralData;
