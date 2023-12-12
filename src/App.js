@@ -14,6 +14,7 @@ function App() {
     //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
     //const [atomData, setAtomData] = useState([]);
     const [structuralData, setStructuralData] = useState({
+        molecular: '',
         smiles: 'Coming soon!',
         smarts: 'Coming soon!',
         stdinchi: 'Coming soon!',
@@ -152,35 +153,6 @@ function App() {
         }
     };
 
-
-    // Computing formulae
-
-    const calculateMolecularFormula = (atoms) => {
-        const atomCounts = atoms.reduce((acc, atom) => {
-            acc[atom.type] = (acc[atom.type] || 0) + 1;
-            return acc;
-        }, {});
-
-        let formula = '';
-
-        if (atomCounts.C) {
-            formula += `C${atomCounts.C > 1 ? atomCounts.C : ''}`;
-            delete atomCounts.C;
-        }
-
-        if (atomCounts.H) {
-            formula += `H${atomCounts.H > 1 ? atomCounts.H : ''}`;
-            delete atomCounts.H;
-        }
-
-        const sortedAtoms = Object.keys(atomCounts).sort();
-        sortedAtoms.forEach(atom => {
-            formula += `${atom}${atomCounts[atom] > 1 ? atomCounts[atom] : ''}`;
-        });
-
-        return formula;
-    };
-
     // The actual page
 
     return (
@@ -193,7 +165,7 @@ function App() {
                         <h2>Outputs</h2>
                         <div className="name-group">
                             <label>Molecular Formula</label>
-                            <input type="text" readOnly value={calculateMolecularFormula(atoms)} />
+                            <input type="text" readOnly value={structuralData.molecular} />
                         </div>
                         <div className="name-group">
                             <label>SMILES</label>
