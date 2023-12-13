@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from openbabel import pybel
 
 from collections import Counter
 
@@ -24,10 +25,45 @@ def get_molecular(atoms):
         formula += f"{atm}{d_atoms[atm]}" if d_atoms[atm] > 1 else atm
     return formula
 
-def get_smiles(atoms, bonds):
-    print(atoms)
-    print(bonds)
+def get_molfile(atoms, bonds):
+    lines = [
+        '', 
+        'Molstruct by Dan Ni', 
+        'Visit https://github.com/dn285/molstruct for more information'
+    ]
 
+    # Counts line
+    counts_line = [len(atoms), len(bonds)] + [0] * 7
+    counts_line = ''.join(f"{field:>3}" for field in counts_line) 
+    counts_line += "  0999" + " V2000"
+    lines.append(counts_line)
+    
+    # Atoms block
+    for atom in atoms:
+        atom_line = [atom['x'], atom['y'], 0.0]
+        atom_line = ''.join(f"{field:>10.4f}" for field in atom_line)
+        atom_line += f" {atom['type']:>3}" + "  0" # Edit to implement charge
+        atom_line += "  0" * 11
+        lines.append(atom_line)
+
+    # Bonds block
+    for start, end in bonds:
+        bond_line = [
+            start+1, 
+            end+1, 
+            1, # Edit to implement multiple bonds
+            0 # Edit to implement stereochemistry
+        ]
+        bond_line += [0] * 3
+        bond_line = ''.join(f"{field:3}" for field in bond_line)
+        lines.append(bond_line)
+
+    # Terminator 
+    lines.append("M  END")
+    
+    return '\n'.join(lines)
+
+def get_smiles(atoms, bonds):
     return "Coming soon!"
 
 def get_smarts(atoms, bonds):
@@ -48,10 +84,23 @@ def compute_structural_data():
         data = request.json
 
         atoms = [(atom['id'], atom['type']) for atom in data['atoms']]
-        bonds = [(bond['start']['id'], bond['end']['id']) for bond in data['bonds']]
+
+        # Remove duplicate bonds
+        bonds = []
+        for bond in data['bonds']:
+            start, end = bond['start']['id'], bond['end']['id']
+            if (start, end) in bonds:
+                continue
+            if (end, start) in bonds:
+                continue
+            bonds.append((start, end))
+        
+        molecular = get_molecular(atoms)
 
         # TODO: Code to compute SMILES and others
-        molecular = get_molecular(atoms)
+        molfile = get_molfile(data['atoms'], bonds)
+        my_molecule = pybel.readstring('sdf', molfile)
+
         smiles = get_smiles(atoms, bonds)
         smarts = get_smarts(atoms, bonds)
         stdinchi = get_stdinchi(atoms, bonds)
