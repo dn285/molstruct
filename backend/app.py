@@ -63,18 +63,6 @@ def get_molfile(atoms, bonds):
     
     return '\n'.join(lines)
 
-def get_smiles(atoms, bonds):
-    return "Coming soon!"
-
-def get_smarts(atoms, bonds):
-    return "Coming soon!"
-
-def get_stdinchi(atoms, bonds):
-    return "Coming soon!"
-
-def get_stdinchikey(atoms, bonds):
-    return "Coming soon!"
-
 def get_iupac(atoms, bonds):
     return "Coming soon!"
 
@@ -94,27 +82,21 @@ def compute_structural_data():
             if (end, start) in bonds:
                 continue
             bonds.append((start, end))
-        
-        molecular = get_molecular(atoms)
 
         # TODO: Code to compute SMILES and others
         molfile = get_molfile(data['atoms'], bonds)
         my_molecule = pybel.readstring('sdf', molfile)
-
-        smiles = get_smiles(atoms, bonds)
-        smarts = get_smarts(atoms, bonds)
-        stdinchi = get_stdinchi(atoms, bonds)
-        stdinchikey = get_stdinchikey(atoms, bonds)
+        
         iupac = get_iupac(atoms, bonds)
 
         return jsonify({
-            "molecular": molecular,
-            "smiles": smiles,
-            "smarts": smarts,
-            "stdinchi": stdinchi,
-            "stdinchikey": stdinchikey,
+            "molecular": get_molecular(atoms),
+            "smiles": my_molecule.write('smi'),
+            "stdinchi": my_molecule.write('inchi'),
+            "stdinchikey": my_molecule.write('inchikey'),
             "iupac": iupac
         })
+    
     except Exception as e:
         print(f"Backend error: {e}")
         return jsonify({"error": "Error processing data"}), 500

@@ -15,10 +15,9 @@ function App() {
     //const [atomData, setAtomData] = useState([]);
     const [structuralData, setStructuralData] = useState({
         molecular: '',
-        smiles: 'Coming soon!',
-        smarts: 'Coming soon!',
-        stdinchi: 'Coming soon!',
-        stdinchikey: 'Coming soon!',
+        smiles: '',
+        stdinchi: '',
+        stdinchikey: '',
         iupac: 'Coming soon!'
     });
 
@@ -173,10 +172,6 @@ function App() {
                         <div className="name-group">
                             <label>SMILES</label>
                             <input type="text" readOnly value={structuralData.smiles} />
-                        </div>
-                        <div className="name-group">
-                            <label>SMARTS</label>
-                            <input type="text" readOnly value={structuralData.smarts} />
                         </div>
                         <div className="name-group">
                             <label>StdInChI</label>
