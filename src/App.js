@@ -80,8 +80,11 @@ function App() {
                     setSelectedAtoms([clickedAtom]);
                 }
                 else {
-                    const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius);
-                    setBonds([...bonds, newBond])
+                    if (selectedAtoms[0].id != clickedAtom.id) {
+                        const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius);
+                        setBonds([...bonds, newBond])
+                    }
+
                     setSelectedAtoms([]);
                 }
             }
