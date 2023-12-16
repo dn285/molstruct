@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 from openbabel import pybel
+import pubchempy as pcp
 
 from collections import Counter
 
@@ -63,9 +65,6 @@ def get_molfile(atoms, bonds):
     
     return '\n'.join(lines)
 
-def get_iupac(atoms, bonds):
-    return "Coming soon!"
-
 @app.route('/convert', methods=['POST'])
 def compute_structural_data():
     try:
@@ -83,18 +82,20 @@ def compute_structural_data():
                 continue
             bonds.append((start, end))
 
-        # TODO: Code to compute SMILES and others
+        # Compute SMILES and others
         molfile = get_molfile(data['atoms'], bonds)
         my_molecule = pybel.readstring('sdf', molfile)
-        
-        iupac = get_iupac(atoms, bonds)
+        smiles = my_molecule.write('smi')
+
+        # Obtain IUPAC name from PubChem
+        queried_mol = pcp.get_compounds(smiles, 'smiles')[0]
 
         return jsonify({
             "molecular": get_molecular(atoms),
-            "smiles": my_molecule.write('smi'),
+            "smiles": smiles,
             "stdinchi": my_molecule.write('inchi'),
             "stdinchikey": my_molecule.write('inchikey'),
-            "iupac": iupac
+            "iupac": queried_mol.iupac_name
         })
     
     except Exception as e:
