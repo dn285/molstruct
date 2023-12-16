@@ -49,11 +49,11 @@ def get_molfile(atoms, bonds):
         lines.append(atom_line)
 
     # Bonds block
-    for start, end in bonds:
+    for start, end, multiplicity in bonds:
         bond_line = [
             start+1, 
             end+1, 
-            1, # Edit to implement multiple bonds
+            multiplicity, # Edit to implement multiple bonds
             0 # Edit to implement stereochemistry
         ]
         bond_line += [0] * 3
@@ -76,11 +76,12 @@ def compute_structural_data():
         bonds = []
         for bond in data['bonds']:
             start, end = bond['start']['id'], bond['end']['id']
+            multiplicity = bond['multiplicity']
             if (start, end) in bonds:
                 continue
             if (end, start) in bonds:
                 continue
-            bonds.append((start, end))
+            bonds.append((start, end, multiplicity))
 
         # Compute SMILES and others
         molfile = get_molfile(data['atoms'], bonds)

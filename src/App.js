@@ -46,14 +46,42 @@ function App() {
 
         // Draw bonds
         bonds.forEach(bond => {
-            context.beginPath();
-            context.moveTo(bond.start.x, bond.start.y);
-            context.lineTo(bond.end.x, bond.end.y);
-            context.stroke();
+            if (bond.multiplicity === 1) {
+                drawSingleBond(context, bond);
+            }
+            else if (bond.multiplicity === 2) {
+                drawDoubleBond(context, bond);
+            }
+            else if (bond.multiplicity === 3) {
+                drawTripleBond(context, bond);
+            }
         });
 
         updateStructuralData();
     }, [atoms, bonds]);
+
+    // Bond drawing functions
+
+    function drawSingleBond(context, bond) {
+        context.beginPath();
+        context.moveTo(bond.start.x, bond.start.y);
+        context.lineTo(bond.end.x, bond.end.y);
+        context.stroke();
+    }
+
+    function drawDoubleBond(context, bond) {
+        context.beginPath();
+        context.moveTo(bond.start.x, bond.start.y);
+        context.lineTo(bond.end.x, bond.end.y);
+        context.stroke();
+    }
+
+    function drawTripleBond(context, bond) {
+        context.beginPath();
+        context.moveTo(bond.start.x, bond.start.y);
+        context.lineTo(bond.end.x, bond.end.y);
+        context.stroke();
+    }
 
     // Handlers
 
@@ -73,14 +101,15 @@ function App() {
             addAtom(selectedTool, x, y);
             setSelectedAtoms([]);
         }
-        else if (selectedTool === 'bond') {
+        else {
             if (clickedAtom) {
                 if (selectedAtoms.length < 1) {
                     setSelectedAtoms([clickedAtom]);
                 }
                 else {
                     if (selectedAtoms[0].id !== clickedAtom.id) {
-                        const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius);
+                        const multiplicity = Number(selectedTool.slice(-1));
+                        const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius, multiplicity);
                         setBonds([...bonds, newBond])
                     }
 
@@ -100,7 +129,7 @@ function App() {
         setAtoms([...atoms, newAtom]);
     };
 
-    const createBond = (startAtom, endAtom, atomRadius) => {
+    const createBond = (startAtom, endAtom, atomRadius, multiplicity) => {
         const dx = endAtom.x - startAtom.x;
         const dy = endAtom.y - startAtom.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -120,7 +149,8 @@ function App() {
                 id: endAtom.id,
                 x: endAtom.x - offsetX,
                 y: endAtom.y - offsetY
-            }
+            },
+            multiplicity: multiplicity
         };
     };
 
@@ -200,7 +230,9 @@ function App() {
                                 {element}
                             </button>
                         ))}
-                        <button className={selectedTool === 'bond' ? 'selected' : ''} onClick={() => setSelectedTool('bond')}>Bond</button>
+                        <button className={selectedTool === 'bond1' ? 'selected' : ''} onClick={() => setSelectedTool('bond1')}>Bond1</button>
+                        <button className={selectedTool === 'bond2' ? 'selected' : ''} onClick={() => setSelectedTool('bond2')}>Bond2</button>
+                        <button className={selectedTool === 'bond3' ? 'selected' : ''} onClick={() => setSelectedTool('bond3')}>Bond3</button>
                         <button onClick={clearCanvas}>Clear</button>
                     </div>
                     <canvas ref={canvasRef} width="800" height="600" onClick={handleCanvasClick} className="drawing-area" />
