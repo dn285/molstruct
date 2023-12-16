@@ -214,7 +214,9 @@ function App() {
             <div className="top-container">
                 <div className="sidebar">
                     <h1>Welcome to molstruct!</h1>
-                    <p>Draw your molecule onto the canvas on the right and see the corresponding molecular formula below.</p>
+                    <p>Draw your molecule onto the canvas on the right and see
+                        the corresponding structural data and IUPAC name below.
+                        Note that IUPAC names are not guaranteed to be correct.</p>
                     <div className="output-names">
                         <h2>Outputs</h2>
                         <div className="name-group">
