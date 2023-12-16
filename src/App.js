@@ -79,7 +79,7 @@ function App() {
                     setSelectedAtoms([clickedAtom]);
                 }
                 else {
-                    if (selectedAtoms[0].id != clickedAtom.id) {
+                    if (selectedAtoms[0].id !== clickedAtom.id) {
                         const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius);
                         setBonds([...bonds, newBond])
                     }
@@ -88,8 +88,6 @@ function App() {
                 }
             }
         }
-
-        //updateStructuralData();
     };
 
     const addAtom = (atomType, x, y) => {
