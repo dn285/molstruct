@@ -9,7 +9,9 @@ function App() {
     const [bonds, setBonds] = useState([]);
     const [selectedAtoms, setSelectedAtoms] = useState([]);
     const canvasRef = useRef(null);
+
     const atomRadius = 8;
+    const bondSpace = 2; // The space between double bonds
 
     //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
     //const [atomData, setAtomData] = useState([]);
@@ -46,14 +48,17 @@ function App() {
 
         // Draw bonds
         bonds.forEach(bond => {
+            const startAtom = bond.start;
+            const endAtom = bond.end;
+
             if (bond.multiplicity === 1) {
-                drawSingleBond(context, bond);
+                drawSingleBond(context, startAtom.x, startAtom.y, endAtom.x, endAtom.y);
             }
             else if (bond.multiplicity === 2) {
-                drawDoubleBond(context, bond);
+                drawDoubleBond(context, startAtom.x, startAtom.y, endAtom.x, endAtom.y, bondSpace);
             }
             else if (bond.multiplicity === 3) {
-                drawTripleBond(context, bond);
+                drawTripleBond(context, startAtom.x, startAtom.y, endAtom.x, endAtom.y);
             }
         });
 
@@ -62,25 +67,53 @@ function App() {
 
     // Bond drawing functions
 
-    function drawSingleBond(context, bond) {
+    function drawSingleBond(context, startX, startY, endX, endY) {
+        // Calculate direction vector
+        const dx = endX - startX;
+        const dy = endY - startY;
+
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const vx = dx / dist;
+        const vy = dy / dist;
+
+        const offsetX = vx * atomRadius;
+        const offsetY = vy * atomRadius;
+
         context.beginPath();
-        context.moveTo(bond.start.x, bond.start.y);
-        context.lineTo(bond.end.x, bond.end.y);
+        context.moveTo(startX + offsetX, startY + offsetY);
+        context.lineTo(endX - offsetX, endY - offsetY);
         context.stroke();
     }
 
-    function drawDoubleBond(context, bond) {
-        context.beginPath();
-        context.moveTo(bond.start.x, bond.start.y);
-        context.lineTo(bond.end.x, bond.end.y);
-        context.stroke();
+    function drawDoubleBond(context, startX, startY, endX, endY, bondSpace) {
+        // Calculate direction vector
+        const dx = endX - startX;
+        const dy = endY - startY;
+
+        // Calculate perpendicular vector
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const ux = -dy / dist;
+        const uy = dx / dist;
+
+        // Calculate offset points
+        const sx1 = startX + ux * bondSpace;
+        const sy1 = startY + uy * bondSpace;
+        const ex1 = endX + ux * bondSpace;
+        const ey1 = endY + uy * bondSpace;
+
+        const sx2 = startX - ux * bondSpace;
+        const sy2 = startY - uy * bondSpace;
+        const ex2 = endX - ux * bondSpace;
+        const ey2 = endY - uy * bondSpace;
+
+        drawSingleBond(context, sx1, sy1, ex1, ey1);
+        drawSingleBond(context, sx2, sy2, ex2, ey2);
     }
 
-    function drawTripleBond(context, bond) {
-        context.beginPath();
-        context.moveTo(bond.start.x, bond.start.y);
-        context.lineTo(bond.end.x, bond.end.y);
-        context.stroke();
+    function drawTripleBond(context, startX, startY, endX, endY) {
+        drawSingleBond(context, startX, startY, endX, endY);
+        drawDoubleBond(context, startX, startY, endX, endY, 2 * bondSpace);
     }
 
     // Handlers
@@ -109,7 +142,7 @@ function App() {
                 else {
                     if (selectedAtoms[0].id !== clickedAtom.id) {
                         const multiplicity = Number(selectedTool.slice(-1));
-                        const newBond = createBond(selectedAtoms[0], clickedAtom, atomRadius, multiplicity);
+                        const newBond = createBond(selectedAtoms[0], clickedAtom, multiplicity);
                         setBonds([...bonds, newBond])
                     }
 
@@ -129,26 +162,17 @@ function App() {
         setAtoms([...atoms, newAtom]);
     };
 
-    const createBond = (startAtom, endAtom, atomRadius, multiplicity) => {
-        const dx = endAtom.x - startAtom.x;
-        const dy = endAtom.y - startAtom.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const vx = dx / dist;
-        const vy = dy / dist;
-        const offsetX = vx * atomRadius;
-        const offsetY = vy * atomRadius;
-
+    const createBond = (startAtom, endAtom, multiplicity) => {
         return {
             start: {
                 id: startAtom.id,
-                x: startAtom.x + offsetX,
-                y: startAtom.y + offsetY
+                x: startAtom.x,
+                y: startAtom.y
             },
             end: {
                 id: endAtom.id,
-                x: endAtom.x - offsetX,
-                y: endAtom.y - offsetY
+                x: endAtom.x,
+                y: endAtom.y
             },
             multiplicity: multiplicity
         };
