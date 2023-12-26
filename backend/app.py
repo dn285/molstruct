@@ -7,7 +7,7 @@ import pubchempy as pcp
 from collections import Counter
 
 app = Flask(__name__)
-CORS(app, resources={r"/convert": {"origins": "https://molstruct-c555.vercel.app"}})
+CORS(app, resources={r"/convert": {"origins": "https://molstruct.vercel.app"}})
 
 @app.route('/')
 def home():
