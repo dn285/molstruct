@@ -1,13 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-#from openbabel import pybel
-#import pubchempy as pcp
+from rdkit import Chem
+import pubchempy as pcp
 
 from collections import Counter
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://molstruct-c555.vercel.app"}})
+CORS(app)
 
 @app.route('/')
 def home():
@@ -68,14 +68,6 @@ def get_molfile(atoms, bonds):
 @app.route('/convert', methods=['POST'])
 def compute_structural_data():
     try:
-        return jsonify({
-            "molecular": "TEST",
-            "smiles": "TEST",
-            "stdinchi": "TEST",
-            "stdinchikey": "TEST",
-            "iupac": "TEST",
-        })
-
         data = request.json
 
         atoms = [(atom['id'], atom['type']) for atom in data['atoms']]
@@ -93,8 +85,12 @@ def compute_structural_data():
 
         # Compute SMILES and others
         molfile = get_molfile(data['atoms'], bonds)
-        my_molecule = pybel.readstring('sdf', molfile)
-        smiles = my_molecule.write('smi')
+        
+        my_molecule = Chem.MolFromMolBlock(molfile)
+
+        smiles = Chem.MolToSmiles(my_molecule, isomericSmiles=False)
+
+        print(smiles)
 
         # Obtain IUPAC name from PubChem
         queried_mol = pcp.get_compounds(smiles, 'smiles')[0]
@@ -102,8 +98,8 @@ def compute_structural_data():
         return jsonify({
             "molecular": queried_mol.molecular_formula,
             "smiles": smiles,
-            "stdinchi": my_molecule.write('inchi'),
-            "stdinchikey": my_molecule.write('inchikey'),
+            "stdinchi": "TODO",
+            "stdinchikey": "TODO",
             "iupac": queried_mol.iupac_name
         })
     
