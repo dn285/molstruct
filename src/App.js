@@ -210,7 +210,7 @@ function App() {
 
         // Evenly place hydrogens into largest gap
         const positions = [];
-        const angleInterval = largestGap / (hydrogenCount + 1); // +1 to avoid placing on bond
+        const angleInterval = largestGap / (hydrogenCount + (existingAngles.length > 0));
         for (let i = 1; i <= hydrogenCount; i++) {
             const angle = largestStart + angleInterval * i;
             const x = centerX + bondLength * Math.cos(angle);
