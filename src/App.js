@@ -11,7 +11,7 @@ function App() {
     const canvasRef = useRef(null);
 
     const atomRadius = 8;
-    const bondLength = 20;
+    const bondLength = 50;
     const bondSpace = 2; // The space between double bonds
 
     //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
@@ -131,7 +131,7 @@ function App() {
 
             // Render implicit hydrogens 
             const hydrogens = calculateHydrogens(atom, bonds);
-            const hydrogenPositions = calculateHydrogenPositions(atom.x, atom.y, hydrogens, bondLength)
+            const hydrogenPositions = calculateHydrogenPositions(atom, hydrogens, bondLength)
             hydrogenPositions.forEach(pos => {
                 context.font = "16px Arial";
                 context.textAlign = "center";
@@ -161,7 +161,7 @@ function App() {
         updateStructuralData();
     }, [atoms, bonds]);
 
-    // Implicit hydrogens
+    // Implicit hydrogen calculations
 
     const calculateHydrogens = (atom, bonds) => {
         const valence = {
@@ -172,12 +172,44 @@ function App() {
         return hydrogensNeeded > 0 ? hydrogensNeeded : 0;
     };
 
-    function calculateHydrogenPositions(centerX, centerY, hydrogenCount, bondLength) {
-        const positions = [];
-        const angleInterval = 2 * Math.PI / hydrogenCount;
+    function calculateHydrogenPositions(atom, hydrogenCount, bondLength) {
+        const centerX = atom.x;
+        const centerY = atom.y;
 
-        for (let i = 0; i < hydrogenCount; i++) {
-            const angle = angleInterval * i;
+        // Calculate existing bond angles around this atom
+        const existingAngles = bonds.filter(bond => bond.start.id === atom.id || bond.end.id === atom.id)
+            .map(bond => {
+                const bondedAtom = bond.start.id === atom.id ? bond.end : bond.start;
+                return Math.atan2(bondedAtom.y - centerY, bondedAtom.x - centerX);
+            });
+
+        // Find largest gap
+        let largestGap = 0;
+        let largestStart = 0;
+
+        if (existingAngles.length <= 1) {
+            largestGap = 2 * Math.PI;
+            largestStart = existingAngles.length === 1 ? existingAngles[0] : 0;
+        }
+        else {
+            for (let i = 0; i < existingAngles.length; i++) {
+                const currentAngle = existingAngles[i];
+                const nextAngle = existingAngles[(i + 1) % existingAngles.length];
+                const gap = (nextAngle - currentAngle + 2 * Math.PI) % (2 * Math.PI);
+
+                if (gap > largestGap) {
+                    largestGap = gap;
+                    largestStart = currentAngle;
+                }
+            }
+        }
+
+
+        // Evenly place hydrogens into largest gap
+        const positions = [];
+        const angleInterval = largestGap / (hydrogenCount + 1); // +1 to avoid placing on bond
+        for (let i = 1; i <= hydrogenCount; i++) {
+            const angle = largestStart + angleInterval * i;
             const x = centerX + bondLength * Math.cos(angle);
             const y = centerY + bondLength * Math.sin(angle);
             positions.push({ x, y });
