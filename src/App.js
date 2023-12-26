@@ -167,7 +167,10 @@ function App() {
         const valence = {
             'B': 3, 'C': 4, 'N': 3, 'O': 2, 'P': 3
         };
-        const bondCount = bonds.filter(bond => bond.start.id === atom.id || bond.end.id === atom.id).length;
+        const bondCount = bonds
+            .filter(bond => bond.start.id === atom.id || bond.end.id === atom.id)
+            .reduce((sum, bond) => sum + bond.multiplicity, 0);
+
         const hydrogensNeeded = valence[atom.type] - bondCount;
         return hydrogensNeeded > 0 ? hydrogensNeeded : 0;
     };
