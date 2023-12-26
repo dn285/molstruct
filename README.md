@@ -12,9 +12,7 @@ To spin up the backend, which is required for accessing naming functionality: Na
 
 ## How it Works
 
-The Molstruct backend constructs a MOL file that is translated into SMILES, StdInChI and StdInChIKey formats using OpenBabel. The molecular formula is computed based on atoms placed on the canvas, while the other fields assume that hydrogens are implicit. 
-
-The IUPAC name is obtained by querying PubChem using the PubChemPy API with the aforementioned SMILES formula. As a result, IUPAC names are not guaranteed to be correct. In particular, if a molecule is not in the PubChem database, the displayed IUPAC name will be incorrect.
+The Molstruct backend constructs a MOL file that is translated into SMILES, StdInChI and StdInChIKey formats using OpenBabel. The molecular formula and IUPAC name are obtained by querying PubChem using the PubChemPy API with the aforementioned SMILES formula. As a result, IUPAC names are not guaranteed to be correct. In particular, if a molecule is not in the PubChem database, the displayed IUPAC name will be incorrect.
 
 ## Learn More
 
