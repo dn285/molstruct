@@ -292,9 +292,7 @@ function App() {
             <div className="top-container">
                 <div className="sidebar">
                     <h1>Welcome to molstruct!</h1>
-                    <p>Draw your molecule onto the canvas on the right and see
-                        the corresponding structural data and IUPAC name below.
-                        Click to place atoms, and click two atoms to draw a
+                    <p>Click once to place atoms. Click on two atoms to draw a
                         bond between them. Note that IUPAC names are not
                         guaranteed to be correct.</p>
                     <div className="output-names">
