@@ -94,7 +94,7 @@ function App() {
 
         const fetchStructuralData = async () => {
             try {
-                const response = await fetch('https://molstruct-3766909b4165.herokuapp.com/convert', {
+                const response = await fetch('https://molstruct-backend-1330be30df73.herokuapp.com/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
