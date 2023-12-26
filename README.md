@@ -1,5 +1,7 @@
 # Molstruct
 
+Try a live demo here: https://molstruct.vercel.app/ :)
+
 ## About
 
 Molstruct is a web application where users draw molecular structures and obtain the corresponding formula, structural data and IUPAC name.
