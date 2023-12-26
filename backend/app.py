@@ -92,7 +92,7 @@ def compute_structural_data():
         queried_mol = pcp.get_compounds(smiles, 'smiles')[0]
 
         return jsonify({
-            "molecular": get_molecular(atoms),
+            "molecular": queried_mol.molecular_formula,
             "smiles": smiles,
             "stdinchi": my_molecule.write('inchi'),
             "stdinchikey": my_molecule.write('inchikey'),
