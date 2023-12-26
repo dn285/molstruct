@@ -71,10 +71,9 @@ def compute_structural_data():
 
         # Compute SMILES and others
         molfile = get_molfile(data['atoms'], bonds)
-        
-        my_molecule = Chem.MolFromMolBlock(molfile)
-
+        my_molecule = Chem.MolFromMolBlock(molfile) 
         smiles = Chem.MolToSmiles(my_molecule, isomericSmiles=False)
+        smarts = Chem.MolToSmarts(my_molecule, isomericSmiles=False)
 
         print(smiles)
 
@@ -84,8 +83,7 @@ def compute_structural_data():
         return jsonify({
             "molecular": queried_mol.molecular_formula,
             "smiles": smiles,
-            "stdinchi": "TODO",
-            "stdinchikey": "TODO",
+            "smarts": smarts,
             "iupac": queried_mol.iupac_name
         })
     
