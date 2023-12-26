@@ -68,6 +68,14 @@ def get_molfile(atoms, bonds):
 @app.route('/convert', methods=['POST'])
 def compute_structural_data():
     try:
+        return jsonify({
+            "molecular": "TEST",
+            "smiles": "TEST",
+            "stdinchi": "TEST",
+            "stdinchikey": "TEST",
+            "iupac": "TEST",
+        })
+
         data = request.json
 
         atoms = [(atom['id'], atom['type']) for atom in data['atoms']]
