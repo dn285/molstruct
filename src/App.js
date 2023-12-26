@@ -14,14 +14,12 @@ function App() {
     const bondLength = 50;
     const bondSpace = 2; // The space between double bonds
 
-    //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
-    //const [atomData, setAtomData] = useState([]);
     const [structuralData, setStructuralData] = useState({
         molecular: '',
         smiles: '',
         stdinchi: '',
         stdinchikey: '',
-        iupac: 'Coming soon!'
+        iupac: ''
     });
 
     const clearCanvas = () => {
@@ -207,7 +205,6 @@ function App() {
             }
         }
 
-
         // Evenly place hydrogens into largest gap
         const positions = [];
         const angleInterval = largestGap / (hydrogenCount + (existingAngles.length > 0));
@@ -292,7 +289,9 @@ function App() {
                     <h1>Welcome to molstruct!</h1>
                     <p>Draw your molecule onto the canvas on the right and see
                         the corresponding structural data and IUPAC name below.
-                        Note that IUPAC names are not guaranteed to be correct.</p>
+                        Click to place atoms, and click two atoms to draw a
+                        bond between them. Note that IUPAC names are not
+                        guaranteed to be correct.</p>
                     <div className="output-names">
                         <h2>Outputs</h2>
                         <div className="name-group">
