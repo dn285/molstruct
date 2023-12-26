@@ -11,6 +11,7 @@ function App() {
     const canvasRef = useRef(null);
 
     const atomRadius = 8;
+    const bondLength = 20;
     const bondSpace = 2; // The space between double bonds
 
     //const [adjacencyMatrix, setAdjacencyMatrix] = useState([]);
@@ -44,6 +45,18 @@ function App() {
             context.textAlign = "center";
             context.textBaseline = "middle";
             context.fillText(atom.type, x, y);
+
+            // Render implicit hydrogens 
+            const hydrogens = calculateHydrogens(atom, bonds);
+            const hydrogenPositions = calculateHydrogenPositions(atom.x, atom.y, hydrogens, bondLength)
+            hydrogenPositions.forEach(pos => {
+                context.font = "16px Arial";
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillText('H', pos.x, pos.y);
+
+                drawSingleBond(context, x, y, pos.x, pos.y);
+            });
         });
 
         // Draw bonds
@@ -64,6 +77,31 @@ function App() {
 
         updateStructuralData();
     }, [atoms, bonds]);
+
+    // Implicit hydrogens
+
+    const calculateHydrogens = (atom, bonds) => {
+        const valence = {
+            'B': 3, 'C': 4, 'N': 3, 'O': 2, 'P': 3
+        };
+        const bondCount = bonds.filter(bond => bond.start.id === atom.id || bond.end.id === atom.id).length;
+        const hydrogensNeeded = valence[atom.type] - bondCount;
+        return hydrogensNeeded > 0 ? hydrogensNeeded : 0;
+    };
+
+    function calculateHydrogenPositions(centerX, centerY, hydrogenCount, bondLength) {
+        const positions = [];
+        const angleInterval = 2 * Math.PI / hydrogenCount;
+
+        for (let i = 0; i < hydrogenCount; i++) {
+            const angle = angleInterval * i;
+            const x = centerX + bondLength * Math.cos(angle);
+            const y = centerY + bondLength * Math.sin(angle);
+            positions.push({ x, y });
+        }
+
+        return positions;
+    }
 
     // Bond drawing functions
 
