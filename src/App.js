@@ -30,6 +30,89 @@ function App() {
     };
 
     useEffect(() => {
+
+        // Bond drawing functions
+        function drawSingleBond(context, startX, startY, endX, endY) {
+            // Calculate direction vector
+            const dx = endX - startX;
+            const dy = endY - startY;
+
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            const vx = dx / dist;
+            const vy = dy / dist;
+
+            const offsetX = vx * atomRadius;
+            const offsetY = vy * atomRadius;
+
+            context.beginPath();
+            context.moveTo(startX + offsetX, startY + offsetY);
+            context.lineTo(endX - offsetX, endY - offsetY);
+            context.stroke();
+        }
+
+        function drawDoubleBond(context, startX, startY, endX, endY, bondSpace) {
+            // Calculate direction vector
+            const dx = endX - startX;
+            const dy = endY - startY;
+
+            // Calculate perpendicular vector
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const ux = -dy / dist;
+            const uy = dx / dist;
+
+            // Calculate offset points
+            const sx1 = startX + ux * bondSpace;
+            const sy1 = startY + uy * bondSpace;
+            const ex1 = endX + ux * bondSpace;
+            const ey1 = endY + uy * bondSpace;
+
+            const sx2 = startX - ux * bondSpace;
+            const sy2 = startY - uy * bondSpace;
+            const ex2 = endX - ux * bondSpace;
+            const ey2 = endY - uy * bondSpace;
+
+            drawSingleBond(context, sx1, sy1, ex1, ey1);
+            drawSingleBond(context, sx2, sy2, ex2, ey2);
+        }
+
+        function drawTripleBond(context, startX, startY, endX, endY) {
+            drawSingleBond(context, startX, startY, endX, endY);
+            drawDoubleBond(context, startX, startY, endX, endY, 2 * bondSpace);
+        }
+
+        // Interface with backend
+        const updateStructuralData = async () => {
+            try {
+                const data = await fetchStructuralData();
+                if (data) {
+                    setStructuralData(data);
+                }
+            }
+            catch (error) {
+                console.error("Error during conversion:", error);
+            }
+        };
+
+        const fetchStructuralData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ atoms, bonds })
+                });
+                const structuralData = await response.json();
+                return structuralData;
+            }
+            catch (error) {
+                console.error("Error during fetching:", error);
+            }
+        };
+
+        // Drawing the canvas
+
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
@@ -103,57 +186,6 @@ function App() {
         return positions;
     }
 
-    // Bond drawing functions
-
-    function drawSingleBond(context, startX, startY, endX, endY) {
-        // Calculate direction vector
-        const dx = endX - startX;
-        const dy = endY - startY;
-
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const vx = dx / dist;
-        const vy = dy / dist;
-
-        const offsetX = vx * atomRadius;
-        const offsetY = vy * atomRadius;
-
-        context.beginPath();
-        context.moveTo(startX + offsetX, startY + offsetY);
-        context.lineTo(endX - offsetX, endY - offsetY);
-        context.stroke();
-    }
-
-    function drawDoubleBond(context, startX, startY, endX, endY, bondSpace) {
-        // Calculate direction vector
-        const dx = endX - startX;
-        const dy = endY - startY;
-
-        // Calculate perpendicular vector
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const ux = -dy / dist;
-        const uy = dx / dist;
-
-        // Calculate offset points
-        const sx1 = startX + ux * bondSpace;
-        const sy1 = startY + uy * bondSpace;
-        const ex1 = endX + ux * bondSpace;
-        const ey1 = endY + uy * bondSpace;
-
-        const sx2 = startX - ux * bondSpace;
-        const sy2 = startY - uy * bondSpace;
-        const ex2 = endX - ux * bondSpace;
-        const ey2 = endY - uy * bondSpace;
-
-        drawSingleBond(context, sx1, sy1, ex1, ey1);
-        drawSingleBond(context, sx2, sy2, ex2, ey2);
-    }
-
-    function drawTripleBond(context, startX, startY, endX, endY) {
-        drawSingleBond(context, startX, startY, endX, endY);
-        drawDoubleBond(context, startX, startY, endX, endY, 2 * bondSpace);
-    }
-
     // Handlers
 
     const handleCanvasClick = (event) => {
@@ -214,35 +246,6 @@ function App() {
             },
             multiplicity: multiplicity
         };
-    };
-
-    const updateStructuralData = async () => {
-        try {
-            const data = await fetchStructuralData();
-            if (data) {
-                setStructuralData(data);
-            }
-        }
-        catch (error) {
-            console.error("Error during conversion:", error);
-        }
-    };
-
-    const fetchStructuralData = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/convert', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ atoms, bonds })
-            });
-            const structuralData = await response.json();
-            return structuralData;
-        }
-        catch (error) {
-            console.error("Error during fetching:", error);
-        }
     };
 
     // The actual page
