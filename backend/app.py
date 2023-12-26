@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from openbabel import pybel
-import pubchempy as pcp
+#from openbabel import pybel
+#import pubchempy as pcp
 
 from collections import Counter
 
