@@ -100,6 +100,12 @@ function App() {
                     },
                     body: JSON.stringify({ atoms, bonds })
                 });
+
+                if (!response.ok) {
+                    console.error("Response error:", response);
+                    throw new Error("Network response was not ok.")
+                }
+
                 const structuralData = await response.json();
                 return structuralData;
             }
