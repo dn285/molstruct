@@ -8,6 +8,7 @@ from collections import Counter
 
 app = Flask(__name__)
 CORS(app, resources={r"/convert": {"origins": "https://molstruct.vercel.app"}})
+#CORS(app)
 
 @app.route('/')
 def home():
@@ -69,9 +70,15 @@ def compute_structural_data():
                 continue
             bonds.append((start, end, multiplicity))
 
-        # Compute SMILES and others
+        # Generate molfile and molecule from molfile 
         molfile = get_molfile(data['atoms'], bonds)
         my_molecule = Chem.MolFromMolBlock(molfile) 
+        
+        # Clear atom mapping numbers
+        for atom in my_molecule.GetAtoms():
+            atom.SetAtomMapNum(0)
+        
+        # Compute SMILES and others
         smiles = Chem.MolToSmiles(my_molecule, isomericSmiles=False)
         smarts = Chem.MolToSmarts(my_molecule, isomericSmiles=False)
 
