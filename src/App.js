@@ -94,6 +94,7 @@ function App() {
         const fetchStructuralData = async () => {
             try {
                 const response = await fetch('https://molstruct-backend-1330be30df73.herokuapp.com/convert', {
+                    //const response = await fetch('http://127.0.0.1:5000/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -249,8 +250,14 @@ function App() {
                 else {
                     if (selectedAtoms[0].id !== clickedAtom.id) {
                         const multiplicity = Number(selectedTool.slice(-1));
+
+                        const filteredBonds = bonds.filter(bond =>
+                            !(bond.start.id === selectedAtoms[0].id && bond.end.id === clickedAtom.id) &&
+                            !(bond.start.id === clickedAtom.id && bond.end.id === selectedAtoms[0].id)
+                        );
+
                         const newBond = createBond(selectedAtoms[0], clickedAtom, multiplicity);
-                        setBonds([...bonds, newBond])
+                        setBonds([...filteredBonds, newBond])
                     }
 
                     setSelectedAtoms([]);
@@ -286,7 +293,6 @@ function App() {
     };
 
     // The actual page
-
     return (
         <div className="App">
             <div className="top-container">
