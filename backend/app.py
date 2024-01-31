@@ -79,19 +79,26 @@ def compute_structural_data():
             atom.SetAtomMapNum(0)
         
         # Compute SMILES and others
-        smiles = Chem.MolToSmiles(my_molecule, isomericSmiles=False)
+        smiles = Chem.MolToSmiles(my_molecule)
         smarts = Chem.MolToSmarts(my_molecule, isomericSmiles=False)
-
-        print(smiles)
 
         # Obtain IUPAC name from PubChem
         queried_mol = pcp.get_compounds(smiles, 'smiles')[0]
+        iupac_name = queried_mol.iupac_name
+        if not iupac_name:
+            print("IUPAC name not found for {queried_mol}, falling back on synonyms")
+            synonyms = pcp.get_synonyms(smiles, 'smiles')
+            if synonyms:
+                iupac_name = synonyms[0]['Synonym'][0]
+            else:
+                print("Molecule could not be identified.")
+                iupac_name = ""
 
         return jsonify({
             "molecular": queried_mol.molecular_formula,
             "smiles": smiles,
             "smarts": smarts,
-            "iupac": queried_mol.iupac_name
+            "iupac": iupac_name
         })
     
     except Exception as e:
